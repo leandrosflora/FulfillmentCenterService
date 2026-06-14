@@ -18,8 +18,8 @@ public sealed class MockFulfillmentCenterRepository : IFulfillmentCenterReposito
             1,
             30m,
             45m,
-            supportsFragileItems: true,
-            supportsRestrictedItems: false),
+            SupportsFragileItems: true,
+            SupportsRestrictedItems: false),
         new(
             Guid.Parse("22222222-2222-2222-2222-222222222222"),
             "BR-RJ-FC-01",
@@ -31,8 +31,8 @@ public sealed class MockFulfillmentCenterRepository : IFulfillmentCenterReposito
             1,
             25m,
             35m,
-            supportsFragileItems: false,
-            supportsRestrictedItems: false),
+            SupportsFragileItems: false,
+            SupportsRestrictedItems: false),
         new(
             Guid.Parse("33333333-3333-3333-3333-333333333333"),
             "BR-MG-FC-01",
@@ -44,8 +44,8 @@ public sealed class MockFulfillmentCenterRepository : IFulfillmentCenterReposito
             2,
             35m,
             50m,
-            supportsFragileItems: true,
-            supportsRestrictedItems: true)
+            SupportsFragileItems: true,
+            SupportsRestrictedItems: true)
     ];
 
     public Task<IReadOnlyList<EligibleCenter>> FindEligibleAsync(Guid sellerId, long destinationPostalCode, FulfillmentMode mode, CancellationToken cancellationToken)
