@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FulfillmentCenterService", "FulfillmentCenterService.csproj", "{8F02BA34-B2AF-4A61-A638-F9A8BAB7ADB9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FulfillmentCenterService.UnitTests", "tests\FulfillmentCenterService.UnitTests\FulfillmentCenterService.UnitTests.csproj", "{E3D9942C-3D16-46C8-B8F5-2B8E1F0CEB28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{8F02BA34-B2AF-4A61-A638-F9A8BAB7ADB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F02BA34-B2AF-4A61-A638-F9A8BAB7ADB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F02BA34-B2AF-4A61-A638-F9A8BAB7ADB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3D9942C-3D16-46C8-B8F5-2B8E1F0CEB28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3D9942C-3D16-46C8-B8F5-2B8E1F0CEB28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3D9942C-3D16-46C8-B8F5-2B8E1F0CEB28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3D9942C-3D16-46C8-B8F5-2B8E1F0CEB28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
