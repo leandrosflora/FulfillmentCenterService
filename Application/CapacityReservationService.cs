@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using FulfillmentCenterService.Application.Ports;
 using FulfillmentCenterService.Contracts;
 using FulfillmentCenterService.Domain;
@@ -32,7 +33,7 @@ public sealed class CapacityReservationService
 
         var reservation = CapacityReservation.Create(request.OrderId, request.FulfillmentCenterId, request.OperationDate, request.Mode, request.RequiredCapacityUnits, idempotencyKey);
         await _reservationRepository.AddAsync(reservation, cancellationToken);
-        await _outboxWriter.AddAsync("FulfillmentCapacityReserved", new { ReservationId = reservation.Id, reservation.OrderId, reservation.FulfillmentCenterId, reservation.OperationDate, reservation.Mode, reservation.ReservedCapacityUnits, reservation.ExpiresAt }, cancellationToken);
+        await _outboxWriter.AddAsync("fulfillment.capacity.reserved", new FulfillmentCapacityReservedPayload(reservation.OrderId, reservation.Id), cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
@@ -49,7 +50,7 @@ public sealed class CapacityReservationService
         var confirmed = await _capacityRepository.ConfirmAsync(reservation.FulfillmentCenterId, reservation.OperationDate, reservation.Mode, reservation.ReservedCapacityUnits, cancellationToken);
         if (!confirmed) throw new InvalidOperationException("Could not confirm fulfillment capacity");
 
-        await _outboxWriter.AddAsync("FulfillmentCapacityConfirmed", new { ReservationId = reservation.Id, reservation.OrderId, reservation.FulfillmentCenterId, reservation.OperationDate, reservation.ReservedCapacityUnits, reservation.ConfirmedAt }, cancellationToken);
+        await _outboxWriter.AddAsync("fulfillment.capacity.confirmed", new FulfillmentCapacityConfirmedPayload(reservation.OrderId, reservation.Id), cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return Map(reservation);
@@ -65,7 +66,7 @@ public sealed class CapacityReservationService
         var released = await _capacityRepository.ReleaseAsync(reservation.FulfillmentCenterId, reservation.OperationDate, reservation.Mode, reservation.ReservedCapacityUnits, cancellationToken);
         if (!released) throw new InvalidOperationException("Could not release fulfillment capacity");
 
-        await _outboxWriter.AddAsync("FulfillmentCapacityReleased", new { ReservationId = reservation.Id, reservation.OrderId, reservation.FulfillmentCenterId, reservation.ReleasedAt }, cancellationToken);
+        await _outboxWriter.AddAsync("fulfillment.capacity.released", new FulfillmentCapacityReleasedPayload(reservation.OrderId, reservation.Id), cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return Map(reservation);
@@ -80,3 +81,19 @@ public sealed class CapacityReservationService
 
     private static CapacityReservationResponse Map(CapacityReservation reservation) => new(reservation.Id, reservation.OrderId, reservation.FulfillmentCenterId, reservation.OperationDate, reservation.Mode, reservation.ReservedCapacityUnits, reservation.Status.ToString(), reservation.ExpiresAt);
 }
+
+internal sealed record FulfillmentCapacityReservedPayload(
+    [property: JsonPropertyName("orderId")] Guid OrderId,
+    [property: JsonPropertyName("reservationId")] Guid ReservationId);
+
+internal sealed record FulfillmentCapacityConfirmedPayload(
+    [property: JsonPropertyName("orderId")] Guid OrderId,
+    [property: JsonPropertyName("reservationId")] Guid ReservationId);
+
+internal sealed record FulfillmentCapacityReleasedPayload(
+    [property: JsonPropertyName("orderId")] Guid OrderId,
+    [property: JsonPropertyName("reservationId")] Guid ReservationId);
+
+internal sealed record FulfillmentCapacityFailedPayload(
+    [property: JsonPropertyName("orderId")] Guid OrderId,
+    [property: JsonPropertyName("reason")] string Reason);

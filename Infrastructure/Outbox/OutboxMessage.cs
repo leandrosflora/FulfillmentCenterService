@@ -18,4 +18,6 @@ public sealed class OutboxMessage
         PayloadJson = payloadJson;
         OccurredAt = DateTimeOffset.UtcNow;
     }
+
+    public void MarkProcessed() => ProcessedAt = DateTimeOffset.UtcNow;
 }

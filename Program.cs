@@ -2,6 +2,7 @@ using FulfillmentCenterService.Api;
 using FulfillmentCenterService.Application;
 using FulfillmentCenterService.Application.Ports;
 using FulfillmentCenterService.Infrastructure.FeatureFlags;
+using FulfillmentCenterService.Infrastructure.Messaging;
 using FulfillmentCenterService.Infrastructure.Mocks;
 using FulfillmentCenterService.Infrastructure.Outbox;
 using FulfillmentCenterService.Infrastructure.Persistence;
@@ -60,7 +61,10 @@ else
 }
 builder.Services.AddScoped<IOutboxWriter, OutboxWriter>();
 
+builder.Services.Configure<KafkaOptions>(builder.Configuration.GetSection(KafkaOptions.SectionName));
 builder.Services.AddHostedService<ReservationExpirationWorker>();
+builder.Services.AddHostedService<FulfillmentCommandsConsumer>();
+builder.Services.AddHostedService<OutboxDispatcher>();
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<FulfillmentDbContext>();
