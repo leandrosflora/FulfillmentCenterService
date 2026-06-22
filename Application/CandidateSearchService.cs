@@ -69,8 +69,8 @@ public sealed class CandidateSearchService
     private static long NormalizePostalCode(string postalCode)
     {
         var digits = new string(postalCode.Where(char.IsDigit).ToArray());
-        if (digits.Length != 8 || !long.TryParse(digits, out var value)) throw new ArgumentException("Invalid postal code");
-        return value;
+        if (digits.Length != 8 || !long.TryParse(digits, out _)) throw new ArgumentException("Invalid postal code");
+        return long.Parse(digits[2..]);
     }
 
     private static void Validate(SearchCandidatesRequest request)
