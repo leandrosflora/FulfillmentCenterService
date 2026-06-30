@@ -51,7 +51,7 @@ public sealed class MockFulfillmentCenterRepository : IFulfillmentCenterReposito
     public Task<IReadOnlyList<EligibleCenter>> FindEligibleAsync(Guid sellerId, long destinationPostalCode, FulfillmentMode mode, CancellationToken cancellationToken)
     {
         var eligibleCenters = Centers
-            .Where(center => destinationPostalCode >= center.PostalCodeFrom && destinationPostalCode <= center.PostalCodeTo)
+            //.Where(center => destinationPostalCode >= center.PostalCodeFrom && destinationPostalCode <= center.PostalCodeTo)
             .Select(center => new EligibleCenter(
                 center.Id,
                 center.Code,
