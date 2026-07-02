@@ -76,8 +76,12 @@ public sealed class FulfillmentCommandsConsumer : BackgroundService
                             {
                                 await service.CreateAsync(request, idempotencyKey, stoppingToken);
                             }
-                            catch (InvalidOperationException ex)
+                            catch (Exception ex) when (ex is InvalidOperationException or ArgumentException)
                             {
+                                // Both business-rule rejections (no capacity) and malformed
+                                // commands mean this reservation can never succeed; treat them
+                                // the same so a bad message doesn't permanently block this
+                                // consumer's offset from advancing.
                                 using var failScope = _scopeFactory.CreateScope();
                                 var writer = failScope.ServiceProvider.GetRequiredService<IOutboxWriter>();
                                 var dbCtx = failScope.ServiceProvider.GetRequiredService<FulfillmentDbContext>();
